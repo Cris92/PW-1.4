@@ -46,9 +46,11 @@ jobs:
         echo "ARM_TENANT_ID=$ARM_TENANT_ID"
 
     - name: Terraform Init
+      working-directory: ./terraform/development
       run: terraform init
 
     - name: Terraform Plan
+      working-directory: ./terraform/development
       run: terraform plan -out=tfplan.binary
 
     - name: Upload Plan for Review
@@ -105,4 +107,5 @@ jobs:
         name: tfplan
 
     - name: Terraform Apply
+      working-directory: ./terraform/development
       run: terraform apply "tfplan.binary"
