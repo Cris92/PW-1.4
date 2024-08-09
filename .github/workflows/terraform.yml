@@ -32,10 +32,10 @@ jobs:
 
     - name: Set up Azure environment variables
       run: |
-        echo "ARM_CLIENT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
-        echo "ARM_CLIENT_SECRET=${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
-        echo "ARM_SUBSCRIPTION_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
-        echo "ARM_TENANT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+        export ARM_CLIENT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+        export ARM_CLIENT_SECRET=${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+        export ARM_SUBSCRIPTION_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        export ARM_TENANT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
     - name: Terraform Init
       run: terraform init
@@ -79,10 +79,10 @@ jobs:
 
     - name: Set up Azure environment variables
       run: |
-        echo "ARM_CLIENT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}" >> $GITHUB_ENV
-        echo "ARM_CLIENT_SECRET=${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}" >> $GITHUB_ENV
-        echo "ARM_SUBSCRIPTION_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}" >> $GITHUB_ENV
-        echo "ARM_TENANT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}" >> $GITHUB_ENV
+        export ARM_CLIENT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+        export ARM_CLIENT_SECRET=${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+        export ARM_SUBSCRIPTION_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        export ARM_TENANT_ID=${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
     - name: Download Plan
       uses: actions/download-artifact@v3
