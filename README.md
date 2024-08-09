@@ -125,4 +125,4 @@ curl http://127.0.0.1:8000
 ```
 Se tutto è stato installato correttamente dovreste avere una response, altrimenti se navigate tramite browser, vedrete questo:
 
-![alt text](django_install_success.png)
+![alt text](docs/img/django_install_success.png)
