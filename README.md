@@ -520,3 +520,21 @@ e ora vedremo che all'interno del nostro container sono presenti i 3 file di ges
 ![alt text](docs/img/portal_after_terraform_2.png)
 
 **⚠️ ATTENZIONE:** In caso doveste committare a questo punto, è necessario aggiungere al .gitignore terraform/*/.terraform/
+
+### Gestione CI/CD
+
+Per la gestione del lancio del terraform quando viene modificato il codice sul repository, andiamo ad utilizzare le Github Actions.
+
+Il primo step sarà quello di creare un Service Principal su azure, che ci permetta di configurare le Actions, in modo che possano apportare modifiche al nostro portale.
+
+Andiamo ad eseguire
+
+```bash
+ad sp create-for-rbac --name "sp-terraform-github-westeu-001" --role="Contributor" --scopes="/subscriptions/xxxxx" --sdk-auth
+```
+
+e ci salviamo l'output contente i dati di connettività del service principal.
+
+Successivamente andiamo ad inserire il json appena salvato sul portale dove risiede il nostro terraform
+
+![alt text](docs/img/github_portal.png)
