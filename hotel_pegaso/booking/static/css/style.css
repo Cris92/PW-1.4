@@ -1,0 +1,81 @@
+body {
+    font-family: 'Playfair Display', serif;
+    background-color: #f5f5dc;
+}
+
+/* Stili per i titoli */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #228B22 !important;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #006400 !important;
+}
+
+.navbar-brand {
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+.nav-link {
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+}
+
+.nav-link:hover {
+    color: #ffd700 !important;
+}
+
+.carousel-inner img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #006400;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.input-group-text {
+    background-color: #e9ecef !important;
+    border: none;
+}
+
+.btn-primary {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    background-color: #006400 !important;
+    border-color: #006400 !important;
+}
+
+.btn-primary:hover {
+    background-color: #004d00 !important;
+}

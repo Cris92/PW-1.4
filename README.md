@@ -126,3 +126,397 @@ curl http://127.0.0.1:8000
 Se tutto è stato installato correttamente dovreste avere una response, altrimenti se navigate tramite browser, vedrete questo:
 
 ![alt text](docs/img/django_install_success.png)
+
+**Generazione file statici**
+
+Vado a creare la cartella che conterra i templates e ad inserire il codice
+
+```bash
+   mkdir templates/
+   mkdir static/
+```
+
+e vado a creare i file che comporranno le pagine
+
+#### index.html
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Pegaso - Homepage</title>
+    <!--Importo i css necessari online -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Stili personalizzati -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <!--Includo con templating la navbar-->
+    {% include 'booking/_navbar.html' %}
+
+    <!-- Gestione del carosello -->
+    <div id="hotelCarousel" class="carousel slide mt-4" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#hotelCarousel" data-bs-slide-to="0" class="active"
+                aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#hotelCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#hotelCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../static/img/carousel_1.jpg" class="d-block w-100" alt="Hotel Pegaso">
+            </div>
+            <div class="carousel-item">
+                <img src="../static/img/carousel_2.jpg" class="d-block w-100" alt="Camere di Lusso">
+            </div>
+            <div class="carousel-item">
+                <img src="../static/img/carousel_3.jpg" class="d-block w-100" alt="Spa e Benessere">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Precedente</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Successivo</span>
+        </button>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Benvenuti a Hotel Pegaso</h1>
+                <p class="lead text-center">Goditi un soggiorno di lusso con i nostri servizi esclusivi.</p>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row">
+                <!-- Colonna per Chi Siamo -->
+                <div class="col-md-6">
+                    <h2>Chi Siamo</h2>
+                    <p>Hotel Pegaso è il luogo ideale per rilassarsi e rigenerarsi. Offriamo un'esperienza unica con
+                        camere
+                        lussuose, ristoranti gourmet e un servizio impeccabile.</p>
+                </div>
+                <!-- Colonna per Contatti -->
+                <div class="col-md-6 text-end">
+                    <h2>Contatti</h2>
+                    <p>Email: info@hotelpegaso.com</p>
+                    <p>Telefono: +39 0123 456789</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</html>
+```
+
+#### navbar.html
+```html
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <i class="fas fa-leaf"></i> Hotel Pegaso
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                        href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'booking' %}active{% endif %}"
+                        href="{% url 'booking' %}">Prenotazione</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'rooms' %}active{% endif %}"
+                        href="{% url 'rooms' %}">Camere Disponibili</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'manage_booking' %}active{% endif %}"
+                        href="{% url 'manage_booking' %}">Gestisci Prenotazione</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
+
+Come si può vedere dal codice, abbiamo alcuni elementi esclusivi della gestione django/jinja.
+
+Innanzitutto il:
+
+*{% load static %}*
+
+Che ci permette di utilizzare i file statici definiti.
+
+Poi abbiamo
+
+*{% include 'navbar.html' %}*
+
+Che ci permette di includere all'interno dei nostri template django dei sottotemplate, in modo da poter centralizzare la gestione di elementi comuni a tutte le pagine(in futuro andremo anche a sviluppare footer.html)
+
+All'interno del file navbar.html abbiamo poi questi blocchi
+
+```html
+<a class="nav-link {% if request.resolver_match.url_name == 'manage_booking' %}active{% endif %}"
+```
+
+Questa sintassi ci permette di utilizzare una logica all'interno dei template.
+Qui nello specifico andiamo a differenziare l'elemento active, in base al valore dell'url su cui ci troviamo
+
+Infine vado a modificare il file settings.py per indicare a django dove sono questi file
+```python
+from django.db import models
+
+# Modello per le stanze dell'hotel
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        #Aggiungo questa riga
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+...
+...
+...
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+#Verifivo la correttezza di questa riga
+STATIC_URL = 'static/'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+   ```
+
+### Configurazione URLs e Path
+
+Adesso vado a configurare i render delle views andando creare il file urls.py in booking
+```python
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('booking/', views.booking_view, name='booking'),
+    path('rooms/', views.rooms, name='rooms'),
+    path('manage-booking/', views.manage_booking, name='manage_booking'),
+]
+```
+
+in questo modo andiamo a definire le route della django app.
+
+Andiamo poi a configurare a quale view corrispondono le singole pagine modificando views.py
+
+```python
+from django.shortcuts import render
+
+# View per la homepage
+def index(request):
+    return render(request, 'index.html')
+
+# View per la pagina di prenotazione
+def booking_view(request):
+    return render(request, 'booking.html')
+
+# View per la pagina delle camere disponibili
+def rooms(request):
+    return render(request, 'rooms.html')
+
+# View per la gestione delle prenotazioni
+def manage_booking(request):
+    return render(request, 'manage-booking.html')
+
+```
+
+
+Adesso andiamo invece ad includere i path di booking all'interno della main app andando a modificare il file urls.py nella cartella padre
+
+```python
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('booking.urls')),  # Include le URL definite nell'app `booking`
+]
+```
+
+Adesso in caso il server fosse ancora running chiudiamo il processo e lo riavviamo tramite
+
+```bash
+python manage.py runserver
+```
+
+Andando ora su http://127.0.0.1:8000/ ci troveremo davanti la nostra homepage
+
+![alt text](homepage_1.png)
+
+
+## Infrastruttura
+L'infrastruttura per il progetto consiste in una Service App deployata su Azure su cui girerà la nostra applicazione Django
+Il tutto verrà gestito in modalità zero-touch, quindi sfruttando un linguaggio IaC, nello specifico terraform, andremo a gestire la creazione degli oggetti necessari.
+In seguito la fase di deploy avverrà tramite github actions
+
+
+[Naming Convention](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
+
+Voglio utilizzare come backend terraform uno storage account, quindi come prima cosa mi creo la subscription dove lavorerò, in seguito vado a creare all'interno uno storage account usando temporaneamente il backend local.
+
+Quindi primo passo, installazione di azcli in locale, come da [documentazione](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=winget#install-or-update)
+
+```bash
+winget install -e --id Microsoft.AzureCLI
+```
+
+Successivamente passiamo alla definizione del provider.tf
+
+
+```terraform
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features = {}
+
+  # Se vuoi specificare la subscription manualmente
+  subscription_id = "24174a6a-0206-4456-9d93-343680d2962b" 
+}
+```
+
+E andiamo a definire il file che creerà lo storage account dedicato ad ospitare i tf statefiles
+
+```terraform
+resource "azurerm_resource_group" "main" {
+  name     = "rg-terraform-states-001"
+  location = "West Europe"
+}
+
+resource "azurerm_storage_account" "terraform" {
+  name                     = "satfcrosswesteu001"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = {
+    environment = "Cross"
+  }
+}
+
+resource "azurerm_storage_container" "terraform" {
+  name                  = "tfstate"
+  storage_account_name  = azurerm_storage_account.terraform.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_account_network_rules" "terraform" {
+  storage_account_id = azurerm_storage_account.terraform.id
+
+  default_action = "Allow"
+  bypass         = ["AzureServices"]
+
+  ip_rules = []
+}
+```
+
+Andiamo quindi prima ad effettuare l'az login per connetterci al nostro account azure
+
+
+```bash
+az login --tenant xxxxxxxxxxxxx
+```
+
+ e successivamente lanciamo
+
+```bash
+terraform init
+terraform plan
+```
+
+A questo punto, se dal log otteniamo la creazione del solo storage account, procediamo con
+
+
+```bash
+terraform apply
+```
+
+Se tutto è stato eseguito correttamente, sul portale avremo un resource group con all'interno lo storage
+
+![alt text](docs/img/portal_after_terraform_1.png)
+
+
+Adesso, andiamo a configurare lo storage come remote backend in modo da svincolarci dallo sviluppo in locale.
+Per far ciò, creiamo 3 cartelle in /terraform, e andiamo a creare i provider per i 3 ambienti
+
+
+```terraform
+terraform {
+  backend "azurerm" {
+    resource_group_name   = "rg-terraform-states-001"
+    storage_account_name  = "satfcrosswesteu001"
+    container_name        = "tfstate"
+    #Cambiamo questo nome in base all'ambiente
+    key                   = "developement.tfstate"  # Puoi personalizzare il nome del file di stato
+  }
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features = {}
+}
+```
+
+Rieffettuiamo
+```bash
+terraform init
+```
+
+
+e ora vedremo che all'interno del nostro container sono presenti i 3 file di gestione degli state
+
+![alt text](docs/img/portal_after_terraform_2.png)
+
+**⚠️ ATTENZIONE:** In caso doveste committare a questo punto, è necessario aggiungere al .gitignore terraform/*/.terraform/
