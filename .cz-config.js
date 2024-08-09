@@ -26,7 +26,7 @@ module.exports = {
     { value: 'WIP', name: 'WIP:      Work in progress' },
   ],
 
-  scopes: [{ name: 'accounts' }, { name: 'admin' }, { name: 'exampleScope' }, { name: 'changeMe' }],
+  scopes: [{ name: 'booking-app' }, { name: 'django-management' }, { name: 'documentation' }, { name: 'project-configuratin' }],
 
   allowTicketNumber: false,
   isTicketNumberRequired: false,
