@@ -1,20 +1,23 @@
-resource "azurerm_app_service_plan" "asp" {
+# Crea un Service Plan su Linux
+resource "azurerm_service_plan" "asp" {
   name                = "asp-pegaso-dev-westeu-001"
   location            = azurerm_resource_group.dev_rg.location
   resource_group_name = azurerm_resource_group.dev_rg.name
-  kind                = "Linux"
+  sku_name            = "B1"
+  os_type             = "Linux"
 
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
 }
 
-resource "azurerm_app_service" "app" {
+# Crea un Linux App Service
+resource "azurerm_linux_web_app" "app" {
   name                = "as-pegaso-dev-westeu-001"
   location            = azurerm_resource_group.dev_rg.location
   resource_group_name = azurerm_resource_group.dev_rg.name
-  app_service_plan_id = azurerm_app_service_plan.asp.id
+  service_plan_id     = azurerm_service_plan.asp.id
+
+  site_config {
+    linux_fx_version = "PYTHON|3.9"
+  }
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
