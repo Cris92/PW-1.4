@@ -50,7 +50,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: tfplan
-        path: ./terraform/development/tfplan.binary
+        path: |
+              ./terraform/development/tfplan.binary
+              ./terraform/development/.terraform.lock.hcl
 
   apply:
     runs-on: ubuntu-latest
@@ -81,7 +83,8 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: tfplan
-        path: ./terraform/development
+        path: |
+              ./terraform/development
 
     - name: Terraform Apply
       working-directory: ./terraform/development
