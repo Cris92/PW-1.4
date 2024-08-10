@@ -3,7 +3,7 @@ resource "azurerm_postgresql_server" "postgres_server" {
   location            = azurerm_resource_group.dev_rg.location
   resource_group_name = azurerm_resource_group.dev_rg.name
 
-  administrator_login          = "root"
+  administrator_login          = "adminuser123"
   administrator_login_password = azurerm_key_vault_secret.db_password.value
   ssl_enforcement_enabled      = false
   sku_name                     = "B_Gen5_1"
