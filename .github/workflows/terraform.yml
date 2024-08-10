@@ -85,7 +85,10 @@ jobs:
         name: tfplan
         path: |
               ./terraform/development
-
+    - name: Terraform Init with Lock File
+      working-directory: ./terraform/development
+      run: terraform init
+      
     - name: Terraform Apply
       working-directory: ./terraform/development
       run: terraform apply "tfplan.binary"
