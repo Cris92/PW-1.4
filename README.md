@@ -754,3 +754,14 @@ Questo viene effettuato in quanto in questo modo, possiamo richiedere un'approva
 
 
 Andando adesso a creare i corrispondenti file per la gestione del workflow negli altri ambienti, abbiamo un metodo per aggiornare la nostra infrastruttura, completamente in remoto, e gestita da github.
+
+
+## BiblioGraphy
+
+https://docs.github.com/en/actions
+
+https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure
+
+https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cwindows%2Cazure-cli%2Cazure-cli-deploy%2Cdeploy-instructions-azportal%2Cterminal-bash%2Cdeploy-instructions-zip-azcli
+
+https://developer.hashicorp.com/terraform/tutorials/automation/github-actions
