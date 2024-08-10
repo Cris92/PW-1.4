@@ -535,6 +535,195 @@ ad sp create-for-rbac --name "sp-terraform-github-westeu-001" --role="Contributo
 
 e ci salviamo l'output contente i dati di connettività del service principal.
 
-Successivamente andiamo ad inserire il json appena salvato sul portale dove risiede il nostro terraform
+Successivamente andiamo ad inserire il json appena salvato sul portale dove risiede il nostro terraform.
+Andiamo a creare i valori che verranno utilizzati all'interno della pipeline:
 
-![alt text](docs/img/github_portal.png)
+![alt text](docs/img/github_secrets.png)
+
+Adesso abbiamo modo di far effettuare il deploy del nostro terraform, grazie alla connessione garantita dal nostro service principal
+
+Andiamo ora a creare la cartella ./github/workflows, al cui interno inseriremo i nostri workflow per le github actions.
+
+```yaml
+name: 'Terraform Plan and Apply'
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'terraform/**'
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.4.5
+
+    - name: Azure Login via Service Principal
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up Azure environment variables
+      run: |
+          echo "ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}" >> $GITHUB_ENV
+
+    - name: Terraform Init
+      working-directory: ./terraform/development
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: ./terraform/development
+      run: terraform plan -out=tfplan.binary
+
+    - name: Upload Plan for Review
+      uses: actions/upload-artifact@v3
+      with:
+        name: tfplan
+        path: |
+              ./terraform/development/tfplan.binary
+              ./terraform/development/.terraform.lock.hcl
+
+  apply:
+    runs-on: ubuntu-latest
+    needs: terraform  
+    environment: development  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.4.5
+
+    - name: Azure Login via Service Principal
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up Azure environment variables
+      run: |
+          echo "ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}" >> $GITHUB_ENV
+          
+    - name: Download Plan
+      uses: actions/download-artifact@v3
+      with:
+        name: tfplan
+        path: |
+              ./terraform/development
+    - name: Terraform Init with Lock File
+      working-directory: ./terraform/development
+      run: terraform init
+      
+    - name: Terraform Apply
+      working-directory: ./terraform/development
+      run: terraform apply "tfplan.binary"
+```
+
+
+I punti salienti qui sono:
+
+```yaml
+- name: Azure Login via Service Principal
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up Azure environment variables
+      run: |
+          echo "ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}" >> $GITHUB_ENV
+```
+
+Qui andiamo ad effettuare la login grazie al json salvato in precedenza.
+Successivamente andiamo a settare come variabili di ambiente del nostro workflow i parametri di connessione che verranno utilizzati dal terraform per effettuare le operazioni
+
+
+```yaml
+- name: Terraform Init
+      working-directory: ./terraform/development
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: ./terraform/development
+      run: terraform plan -out=tfplan.binary
+
+    - name: Upload Plan for Review
+      uses: actions/upload-artifact@v3
+      with:
+        name: tfplan
+        path: |
+              ./terraform/development/tfplan.binary
+              ./terraform/development/.terraform.lock.hcl
+```
+
+Qui andiamo ad effettuare init ed il plan, e successivamente andiamo a salvare il nostro plan in modo da poterlo utilizzare negli step successivi
+
+```yaml
+
+- name: Azure Login via Service Principal
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up Azure environment variables
+      run: |
+          echo "ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}" >> $GITHUB_ENV
+```
+
+Essendo i vari step gestiti in modo separato, dobbiamo effettuare nuovamente la login e il setting delle variabili di ambiente
+
+```yaml
+
+- name: Download Plan
+      uses: actions/download-artifact@v3
+      with:
+        name: tfplan
+        path: |
+              ./terraform/development
+    - name: Terraform Init with Lock File
+      working-directory: ./terraform/development
+      run: terraform init
+      
+    - name: Terraform Apply
+      working-directory: ./terraform/development
+      run: terraform apply "tfplan.binary"
+```
+
+Infine concludiamo andando a scaricare i file di lock e di plan precedentemente generati, in modo da poter effettuare l'apply
+
+
+Importante questa linea
+
+```yaml
+apply:
+    runs-on: ubuntu-latest
+    needs: terraform  
+    environment: development
+```
