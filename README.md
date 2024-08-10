@@ -741,9 +741,16 @@ apply:
 ```
 
 Il parametro environment, ci permette di associare il lancio ad un github environment specifico.
+Andiamo a creare un environment, e a settare la protection rule che ci permette di richiedere l'approval
+
+![alt text](docs/img/github_environments.png)
+
+
 Questo viene effettuato in quanto in questo modo, possiamo richiedere un'approval dello step prima di procedere, in modo da poter prima verificare il risultato del plan, e solo successivamente andarlo ad eseguire.
 
 ![alt text](docs/img/github_actions_approval.png)
+
+![alt text](docs/img/github_env_protection_rule.png)
 
 
 Andando adesso a creare i corrispondenti file per la gestione del workflow negli altri ambienti, abbiamo un metodo per aggiornare la nostra infrastruttura, completamente in remoto, e gestita da github.
