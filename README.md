@@ -645,6 +645,18 @@ jobs:
 I punti salienti qui sono:
 
 ```yaml
+on:
+  push:
+    paths:
+      - 'terraform/development/**'
+    branches:
+      - main
+  workflow_dispatch:
+```
+Definiamo i trigger della pipeline.
+In questo caso sono la push sulla cartella terraform di ambiente, per il branch main, e il lancio manuale
+
+```yaml
 - name: Azure Login via Service Principal
       uses: azure/login@v1
       with:
@@ -719,7 +731,7 @@ Essendo i vari step gestiti in modo separato, dobbiamo effettuare nuovamente la 
 Infine concludiamo andando a scaricare i file di lock e di plan precedentemente generati, in modo da poter effettuare l'apply
 
 
-Importante questa linea
+Importante per il processo di corretta gestione della pipeline la seguente parte:
 
 ```yaml
 apply:
@@ -727,3 +739,11 @@ apply:
     needs: terraform  
     environment: development
 ```
+
+Il parametro environment, ci permette di associare il lancio ad un github environment specifico.
+Questo viene effettuato in quanto in questo modo, possiamo richiedere un'approval dello step prima di procedere, in modo da poter prima verificare il risultato del plan, e solo successivamente andarlo ad eseguire.
+
+![alt text](docs/img/github_actions_approval.png)
+
+
+Andando adesso a creare i corrispondenti file per la gestione del workflow negli altri ambienti, abbiamo un metodo per aggiornare la nostra infrastruttura, completamente in remoto, e gestita da github.
