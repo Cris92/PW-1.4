@@ -12,7 +12,7 @@ resource "random_password" "postgres_password" {
 }
 
 resource "azurerm_key_vault_secret" "db_password" {
-  name         = "DB_PASSWORD"
+  name         = "DBPASSWORD"
   value        = random_password.postgres_password.result
   key_vault_id = azurerm_key_vault.keyvault.id
 }
