@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-de^(3m@7^j+4vix#p&1vj)(3h_tr(h+5d%uofit*g8zb9ecc6a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.azurewebsites.net', 'your-app-service-name.azurewebsites.net']
+ALLOWED_HOSTS = ['.azurewebsites.net', 'as-pegaso-dev-westeu-001.scm.azurewebsites.net']
 
 
 # Application definition
