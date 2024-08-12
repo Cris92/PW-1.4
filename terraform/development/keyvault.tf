@@ -12,6 +12,7 @@ resource "random_password" "postgres_password" {
   special = true
 }
 
+
 resource "azurerm_key_vault_secret" "db_password" {
   name         = "DBPASSWORD"
   value        = random_password.postgres_password.result

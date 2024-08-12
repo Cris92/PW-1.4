@@ -548,7 +548,7 @@ az role assignment create --assignee <objectId> --role "Storage Blob Data Contri
 
 e ci salviamo l'output contente i dati di connettività del service principal.
 
-Andiamo ora a fornirgli i permessi per gestire key vault e storage accounts, inserendo il l'application id del service principal appena creato (visionabile dall'output o da portale)
+Andiamo ora a fornirgli i permessi per gestire key vault e storage accounts e rbac, inserendo il l'application id del service principal appena creato (visionabile dall'output o da portale)
 
 ```bash
 az role assignment create --assignee <id> --role "Key Vault Contributor" --scope /subscriptions/xxxxx
@@ -558,6 +558,11 @@ az role assignment create --assignee <id> --role "Key Vault Secrets User" --scop
 az role assignment create --assignee <id> --role "Storage Account Contributor" --scope /subscriptions/xxxxx
 
 az role assignment create --assignee <id> --role "Storage Blob Data Contributor" --scope /subscriptions/xxxxx
+
+az role assignment create --assignee <id> --role "User Access Administrator" --scope /subscriptions/xxxxx
+
+az role assignment create --assignee <id> --role "Key Vault Secrets Officer" --scope /subscriptions/xxxxx
+
 ```
 
 Successivamente andiamo ad inserire il json appena salvato sul portale dove risiede il nostro terraform.
