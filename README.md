@@ -382,6 +382,33 @@ Andando ora su http://127.0.0.1:8000/ ci troveremo davanti la nostra homepage
 
 ![alt text](homepage_1.png)
 
+### Test Deploy su Azure
+
+Adesso andiamo ad inizializzare il deploy dell'applicazione sulla nostra infrastruttura Azure.
+Prima di tutto, andiamo a modificare il file settings.py andando a settare i valori per il nostro database in modo da usare quello in remoto invece di quello locale
+
+
+```python
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),          
+        'USER': os.getenv('DB_USER'),          
+        'PASSWORD': os.getenv('DB_PASSWORD'),  
+        'HOST': os.getenv('DB_HOST'),          
+        'PORT': '5432',                        
+    }
+}
+
+
+```
+
+Avendo settato con app settings le variabili di ambiente, dall'app andiamo a prelevare i valori tramite os.getenv()
+Andiamo a creare il requirements.txt andando ad aggiungere oltre a Django, anche le librerie di gestione del container wsgi, e della gestione di postgresql.
+
+Andiamo adesso a lanciare la pipeline definita in Pipeline Deploy WebApp
+
 
 ## Infrastruttura
 L'infrastruttura per il progetto consiste in una Service App deployata su Azure su cui girerà la nostra applicazione Django
@@ -785,11 +812,33 @@ Questo viene effettuato in quanto in questo modo, possiamo richiedere un'approva
 
 Andando adesso a creare i corrispondenti file per la gestione del workflow negli altri ambienti, abbiamo un metodo per aggiornare la nostra infrastruttura, completamente in remoto, e gestita da github.
 
+### Pipeline Deploy WebApp
+
+Andiamo a creare la pipeline che ci permetterà di effettuare il deploy della webapp sull'App Service creato.
+Il contenuto sarà:
+
+```yaml
+
+```
+
+Come si vede da codice, servirà salvare come secret su github il publish profile della webapp.
+Andiamo quindi ad eseguire
+```bash
+az webapp deployment list-publishing-profiles --name as-pegaso-dev-westeu-001 --resource-group rg-pegaso-dev-westeu-001 --xml
+```
+e a salvare il contenuto in un secret chiamato AZURE_WEBAPP_PUBLISH_PROFILE
 ### Elementi infratrutturali
 
 #### PostgreSQL
 Useremo un Postgresql server come appoggio per l'applicazione.
 Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezza adeguato ad un eventuale ambiente di produzione, in quanto non supporta la disabilitazione della navigazione pubblica, o la creazione di un private endpoint.
+
+
+
+## Improvements
+
+- Utilizzare SKU Maggiori su DB per implementare navigazione privata
+- Utilizzare self hosted agents per github actions
 
 
 ## BiblioGraphy
