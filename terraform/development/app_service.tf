@@ -18,10 +18,11 @@ resource "azurerm_linux_web_app" "app" {
   site_config {
   }
   app_settings = {
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true" # Abilita il build durante il deploy
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true"
     "PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
     "POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput"
     "PYTHON_VERSION"                  = "3.9"
+    "SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
     "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
     "DB_NAME"                         = azurerm_postgresql_database.postgres_db.name
