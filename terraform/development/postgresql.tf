@@ -8,12 +8,12 @@ resource "azurerm_postgresql_server" "postgres_server" {
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
   sku_name                         = "B_Gen5_1"
-  version                          = "11"
+  version                          = "12"
   storage_mb                       = 5120
   backup_retention_days            = 7
 
   geo_redundant_backup_enabled  = false
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   depends_on = [
     azurerm_virtual_network.vnet,
