@@ -839,6 +839,7 @@ Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezz
 
 - Utilizzare SKU Maggiori su DB per implementare navigazione privata
 - Utilizzare self hosted agents per github actions
+- Nascondere secret del db tramite keyvault reference su app settings
 
 
 ## BiblioGraphy
@@ -850,3 +851,7 @@ https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure
 https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cwindows%2Cazure-cli%2Cazure-cli-deploy%2Cdeploy-instructions-azportal%2Cterminal-bash%2Cdeploy-instructions-zip-azcli
 
 https://developer.hashicorp.com/terraform/tutorials/automation/github-actions
+
+https://learn.microsoft.com/en-us/training/modules/django-deployment/1-introduction
+
+https://www.bing.com/search?q=azure+app+service+django+db+setup+terraform&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=azure+app+service+django+db+setup+terraform&sc=11-43&sk=&cvid=6653358178E841329B35E7202D451868&ghsh=0&ghacc=0&ghpl=
