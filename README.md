@@ -533,7 +533,32 @@ Andiamo ad eseguire
 ad sp create-for-rbac --name "sp-terraform-github-westeu-001" --role="Contributor" --scopes="/subscriptions/xxxxx" --sdk-auth
 ```
 
+Andiamo ora a fornirgli i permessi per gestire key vault e storage accounts, inserendo il l'object id del service principal appena creato (visionabile dall'output o da portale)
+
+```bash
+az role assignment create --assignee <objectId> --role "Key Vault Contributor" --scope /subscriptions/xxxxx/resourceGroups/rg-pegaso-dev/providers/Microsoft.KeyVault/vaults/kv-pegaso-dev-westeu-001
+
+az role assignment create --assignee <objectId> --role "Key Vault Secrets User" --scope /subscriptions/xxxxx/resourceGroups/rg-pegaso-dev/providers/Microsoft.KeyVault/vaults/kv-pegaso-dev-westeu-001
+
+az role assignment create --assignee <objectId> --role "Storage Account Contributor" --scope /subscriptions/xxxxx/resourceGroups/rg-pegaso-dev/providers/Microsoft.Storage/storageAccounts/sapegasodev
+
+az role assignment create --assignee <objectId> --role "Storage Blob Data Contributor" --scope /subscriptions/xxxxx/resourceGroups/rg-pegaso-dev/providers/Microsoft.Storage/storageAccounts/sapegasodev
+```
+
+
 e ci salviamo l'output contente i dati di connettività del service principal.
+
+Andiamo ora a fornirgli i permessi per gestire key vault e storage accounts, inserendo il l'application id del service principal appena creato (visionabile dall'output o da portale)
+
+```bash
+az role assignment create --assignee <id> --role "Key Vault Contributor" --scope /subscriptions/xxxxx
+
+az role assignment create --assignee <id> --role "Key Vault Secrets User" --scope /subscriptions/xxxxx
+
+az role assignment create --assignee <id> --role "Storage Account Contributor" --scope /subscriptions/xxxxx
+
+az role assignment create --assignee <id> --role "Storage Blob Data Contributor" --scope /subscriptions/xxxxx
+```
 
 Successivamente andiamo ad inserire il json appena salvato sul portale dove risiede il nostro terraform.
 Andiamo a creare i valori che verranno utilizzati all'interno della pipeline:
