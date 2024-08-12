@@ -855,3 +855,5 @@ https://developer.hashicorp.com/terraform/tutorials/automation/github-actions
 https://learn.microsoft.com/en-us/training/modules/django-deployment/1-introduction
 
 https://www.bing.com/search?q=azure+app+service+django+db+setup+terraform&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=azure+app+service+django+db+setup+terraform&sc=11-43&sk=&cvid=6653358178E841329B35E7202D451868&ghsh=0&ghacc=0&ghpl=
+
+https://learn.microsoft.com/en-us/azure/app-service/configure-language-python

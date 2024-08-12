@@ -16,10 +16,11 @@ resource "azurerm_linux_web_app" "app" {
   service_plan_id     = azurerm_service_plan.asp.id
 
   site_config {
-    app_command_line = "/home/site/wwwroot/hotel_pegaso/app_service_config.sh"
   }
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE"        = "1"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true" # Abilita il build durante il deploy
+    "PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
+    "POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput"
     "PYTHON_VERSION"                  = "3.9"
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
     "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
