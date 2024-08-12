@@ -785,6 +785,12 @@ Questo viene effettuato in quanto in questo modo, possiamo richiedere un'approva
 
 Andando adesso a creare i corrispondenti file per la gestione del workflow negli altri ambienti, abbiamo un metodo per aggiornare la nostra infrastruttura, completamente in remoto, e gestita da github.
 
+### Elementi infratrutturali
+
+#### PostgreSQL
+Useremo un Postgresql server come appoggio per l'applicazione.
+Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezza adeguato ad un eventuale ambiente di produzione, in quanto non supporta la disabilitazione della navigazione pubblica, o la creazione di un private endpoint.
+
 
 ## BiblioGraphy
 
