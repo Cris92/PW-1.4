@@ -8,7 +8,7 @@ resource "azurerm_postgresql_server" "postgres_server" {
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
   sku_name                         = "B_Gen5_1"
-  version                          = "12"
+  version                          = "11"
   storage_mb                       = 5120
   backup_retention_days            = 7
 
