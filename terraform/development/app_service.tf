@@ -17,10 +17,10 @@ resource "azurerm_linux_web_app" "app" {
 
   site_config {
     app_command_line = "/home/site/wwwroot/hotel_pegaso/app_service_config.sh"
-    linux_fx_version = "PYTHON|3.9"
   }
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE"        = "1"
+    "PYTHON_VERSION"                  = "3.9"
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
     "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
     "DB_NAME"                         = azurerm_postgresql_database.postgres_db.name
