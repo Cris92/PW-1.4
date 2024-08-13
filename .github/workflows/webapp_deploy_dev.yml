@@ -27,7 +27,7 @@ jobs:
         app-name: 'as-pegaso-dev-westeu-001'  # Sostituisci con il nome della tua app su Azure
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: hotel_pegaso
+        package: ./hotel_pegaso
 
     # - name: Run Django Migrations on Azure
     #   run: |

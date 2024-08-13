@@ -28,3 +28,21 @@ resource "azurerm_postgresql_database" "postgres_db" {
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }
+
+resource "azurerm_postgresql_firewall_rule" "allow_azure_services" {
+  name                = "AllowAzureServices"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
+resource "azurerm_postgresql_firewall_rule" "allow_app_service_outbound2" {
+  name                = "AllowAppServiceOutboundAccess2"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "10.0.1.0"
+  end_ip_address   = "10.0.1.255"
+}
