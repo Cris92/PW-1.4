@@ -43,7 +43,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
   security_rule {
     name                       = "AllowHHttps"
-    priority                   = 1002
+    priority                   = 1004
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
