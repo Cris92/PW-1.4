@@ -20,10 +20,13 @@ resource "azurerm_linux_web_app" "app" {
   app_settings = {
     "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true"
     "PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
-    "POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput"
+    "POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput && python3 manage.py createsuperuser --noinput"
     "PYTHON_VERSION"                  = "3.9"
     "SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
+    "DJANGO_SUPERUSER_USERNAME"       = "admin"
+    "DJANGO_SUPERUSER_EMAIL"          = "admin@example.com"
+    "DJANGO_SUPERUSER_PASSWORD"       = "SuperSecretPassword"
     "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
     "DB_NAME"                         = azurerm_postgresql_database.postgres_db.name
     "DB_USER"                         = "${azurerm_postgresql_server.postgres_server.administrator_login}@${azurerm_postgresql_server.postgres_server.name}"

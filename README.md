@@ -818,7 +818,35 @@ Andiamo a creare la pipeline che ci permetterà di effettuare il deploy della we
 Il contenuto sarà:
 
 ```yaml
+name: Deploy Django App to Azure
 
+on:
+  push:
+    paths:
+      - 'hotel_pegaso/**'
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'as-pegaso-dev-westeu-001'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./hotel_pegaso
 ```
 
 Come si vede da codice, servirà salvare come secret su github il publish profile della webapp.
@@ -831,6 +859,7 @@ e a salvare il contenuto in un secret chiamato AZURE_WEBAPP_PUBLISH_PROFILE
 
 
 Importante è che l'app service abbia come app settings i seguenti parametri
+
 ```terraform
 "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true"
 "PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
@@ -839,16 +868,56 @@ Importante è che l'app service abbia come app settings i seguenti parametri
 "SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
 "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
 ```
+
 Queste servono per attivare e gestiro in modo corretto il lancio automatico del sistema di Build Oryx di App Service
 
 Dopo aver lanciato la pipeline, se tutto è andato correttamente avremo 
 
 ![alt text](docs/img/django_on_app_service.png)
+
+Oppure la nostra homepage se tutto viene configurato correttamente.
+
+L'ultimo step da eseguire per concludere la configurazione è quello di creare un superuser per l'app django.Questo può essere fatto sempre tramite la pipeline usando il comando createsuperuser --noinput e andando a settare i parametri di ambiente per prelevare i valori necessari, quindi questi valori saranno settati su app_settings
+
+- DJANGO_SUPERUSER_USERNAME
+
+- DJANGO_SUPERUSER_EMAIL
+
+- DJANGO_SUPERUSER_PASSWORD
+
+e avendo lo step 
+
+```bash
+python3 manage.py createsuperuser --noinput
+```
 ### Elementi infratrutturali
 
 #### PostgreSQL
 Useremo un Postgresql server come appoggio per l'applicazione.
 Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezza adeguato ad un eventuale ambiente di produzione, in quanto non supporta la disabilitazione della navigazione pubblica, o la creazione di un private endpoint.
+E' importante creare le firewall rules in azure per permettere la comunicazione tra la webapp ed il db
+
+```terraform
+resource "azurerm_postgresql_firewall_rule" "allow_azure_services" {
+  name                = "AllowAzureServices"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
+resource "azurerm_postgresql_firewall_rule" "allow_app_service_outbound2" {
+  name                = "AllowAppServiceOutboundAccess2"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "10.0.1.0"
+  end_ip_address   = "10.0.1.255"
+}
+
+```
+
 
 
 
@@ -876,3 +945,5 @@ https://www.bing.com/search?q=azure+app+service+django+db+setup+terraform&qs=n&f
 https://learn.microsoft.com/en-us/azure/app-service/configure-language-python
 
 https://github.com/microsoft/Oryx/blob/main/doc/configuration.md
+
+https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-createsuperuser
