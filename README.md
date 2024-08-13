@@ -823,10 +823,27 @@ Il contenuto sarà:
 
 Come si vede da codice, servirà salvare come secret su github il publish profile della webapp.
 Andiamo quindi ad eseguire
+
 ```bash
 az webapp deployment list-publishing-profiles --name as-pegaso-dev-westeu-001 --resource-group rg-pegaso-dev-westeu-001 --xml
 ```
 e a salvare il contenuto in un secret chiamato AZURE_WEBAPP_PUBLISH_PROFILE
+
+
+Importante è che l'app service abbia come app settings i seguenti parametri
+```terraform
+"SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true"
+"PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
+"POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput"
+"PYTHON_VERSION"                  = "3.9"
+"SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
+"PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
+```
+Queste servono per attivare e gestiro in modo corretto il lancio automatico del sistema di Build Oryx di App Service
+
+Dopo aver lanciato la pipeline, se tutto è andato correttamente avremo 
+
+![alt text](docs/img/django_on_app_service.png)
 ### Elementi infratrutturali
 
 #### PostgreSQL
@@ -857,3 +874,5 @@ https://learn.microsoft.com/en-us/training/modules/django-deployment/1-introduct
 https://www.bing.com/search?q=azure+app+service+django+db+setup+terraform&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=azure+app+service+django+db+setup+terraform&sc=11-43&sk=&cvid=6653358178E841329B35E7202D451868&ghsh=0&ghacc=0&ghpl=
 
 https://learn.microsoft.com/en-us/azure/app-service/configure-language-python
+
+https://github.com/microsoft/Oryx/blob/main/doc/configuration.md
