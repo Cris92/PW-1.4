@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conferma Prenotazione</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+    {% include './navbar.html' %}
+
+    <div class="container mt-5">
+        <h1 class="text-center">Conferma Prenotazione</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h3>Dettagli della Prenotazione</h3>
+                <p>Stanza: {{ room.name }}</p>
+                <p>Data di Inizio: {{ checkin }}</p>
+                <p>Data di Fine: {{ checkout }}</p>
+                <p>Prezzo Totale: {{ total_price }} €</p>
+
+                <a href="{% url 'complete_booking' room.id %}?checkin={{ checkin }}&checkout={{ checkout }}"
+                    class="btn btn-success">Procedi al Pagamento</a>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

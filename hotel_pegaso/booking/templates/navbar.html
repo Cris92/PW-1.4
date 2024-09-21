@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">
-            <i class="fas fa-leaf"></i> Hotel Pegaso
+        <a class="navbar-brand" href="{% url 'index' %}" style="font-family: 'Playfair Display', serif;">
+            <i class="fas fa-leaf text-success"></i> Hotel Pegaso
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,19 +11,21 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
-                        href="{% url 'index' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'booking' %}active{% endif %}"
-                        href="{% url 'booking' %}">Prenotazione</a>
+                        href="{% url 'index' %}" style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-home"></i> Home
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'rooms' %}active{% endif %}"
-                        href="{% url 'rooms' %}">Camere Disponibili</a>
+                        href="{% url 'rooms' %}" style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-bed"></i> Camere
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'manage_booking' %}active{% endif %}"
-                        href="{% url 'manage_booking' %}">Gestisci Prenotazione</a>
+                    <a class="nav-link" href="{% url 'manage_booking' %}"
+                        style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-calendar-alt"></i> Gestisci Prenotazione
+                    </a>
                 </li>
             </ul>
         </div>

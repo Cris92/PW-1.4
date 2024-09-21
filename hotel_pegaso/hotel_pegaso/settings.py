@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure-de^(3m@7^j+4vix#p&1vj)(3h_tr(h+5d%uofit*g8zb9ecc6a
 DEBUG = True
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Application definition
 
@@ -78,28 +80,28 @@ WSGI_APPLICATION = 'hotel_pegaso.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),          
-        'USER': os.getenv('DB_USER'),          
-        'PASSWORD': os.getenv('DB_PASSWORD'),  
-        'HOST': os.getenv('DB_HOST'),          
-        'PORT': '5432', 
-         'OPTIONS': {
-            'sslmode': 'require',
-        },                           
-    }
-}
-ALLOWED_HOSTS = ['.azurewebsites.net', 'as-pegaso-dev-westeu-001.scm.azurewebsites.net']
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),          
+#         'USER': os.getenv('DB_USER'),          
+#         'PASSWORD': os.getenv('DB_PASSWORD'),  
+#         'HOST': os.getenv('DB_HOST'),          
+#         'PORT': '5432', 
+#          'OPTIONS': {
+#             'sslmode': 'require',
+#         },                           
 #     }
 # }
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['.azurewebsites.net', 'as-pegaso-dev-westeu-001.scm.azurewebsites.net']
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+ALLOWED_HOSTS = []
 
 
 # Password validation

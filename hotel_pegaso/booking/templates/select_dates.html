@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleziona Date di Prenotazione</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+    {% include './navbar.html' %}
+
+    <div class="container mt-5">
+        <h1 class="text-center">{{ room.name }}</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{% url 'confirm_booking' room.id %}" method="GET">
+                    <div class="mb-3">
+                        <label for="checkin" class="form-label">Data di Inizio</label>
+                        <input type="text" id="checkin" name="checkin" class="form-control"
+                            placeholder="Seleziona la data di inizio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="checkout" class="form-label">Data di Fine</label>
+                        <input type="text" id="checkout" name="checkout" class="form-control"
+                            placeholder="Seleziona la data di fine" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Verifica Disponibilità</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        const unavailableDates = {{ unavailable_dates| safe }};
+
+        flatpickr("#checkin", {
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            disable: unavailableDates,
+            onChange: function (selectedDates, dateStr, instance) {
+                flatpickr("#checkout", {
+                    minDate: dateStr,
+                    dateFormat: "Y-m-d",
+                    disable: unavailableDates,
+                });
+            }
+        });
+
+        flatpickr("#checkout", {
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            disable: unavailableDates,
+        });
+    </script>
+    {% include 'footer.html' %}
+
+
+</body>
+
+</html>

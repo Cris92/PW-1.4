@@ -1,0 +1,124 @@
+.hotel-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    flex-direction: column;
+    /* Imposta la direzione di default delle card a colonna */
+}
+
+.hotel-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.hotel-details {
+    flex-grow: 1;
+    width: 100%;
+    /* Assicurati che i dettagli occupino tutta la larghezza disponibile */
+    text-align: center;
+}
+
+.hotel-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hotel-rating {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.hotel-services {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.hotel-services span {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.booking-info {
+    text-align: right;
+    font-size: 1.2rem;
+    color: #ff0000;
+    margin-top: 10px;
+}
+
+.booking-button {
+    text-align: right;
+}
+
+.hidden-tags {
+    display: none;
+}
+
+.show-more {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* Media Query per schermi grandi */
+@media (min-width: 768px) {
+    .hotel-card {
+        flex-direction: row;
+        /* Disposizione orizzontale su schermi grandi */
+        text-align: left;
+    }
+
+    .hotel-image {
+        max-width: 300px;
+        /* Imposta una larghezza massima per l'immagine */
+        margin-right: 15px;
+        /* Aggiungi margine tra l'immagine e i dettagli */
+    }
+
+    .hotel-details {
+        width: calc(100% - 300px);
+        /* Assicurati che i dettagli occupino lo spazio restante */
+    }
+}
+
+/* Media Query per dispositivi mobili */
+@media (max-width: 576px) {
+    .hotel-card {
+        flex-direction: column;
+        /* Le card diventano colonne su dispositivi mobili */
+        text-align: center;
+        /* Centra il contenuto per una migliore visualizzazione */
+    }
+
+    .hotel-image {
+        margin-bottom: 10px;
+        width: 100%;
+        height: auto;
+        /* L'immagine occupa tutta la larghezza disponibile */
+    }
+
+    .hotel-details {
+        text-align: center;
+        width: 100%;
+    }
+
+    .booking-button {
+        margin-top: 10px;
+    }
+}
+
+.container,
+.row {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
