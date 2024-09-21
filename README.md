@@ -381,6 +381,16 @@ python manage.py runserver
 Andando ora su http://127.0.0.1:8000/ ci troveremo davanti la nostra homepage
 
 ![alt text](homepage_1.png)
+### Deploy Modelli
+
+Ora dobbiamo creare i nostri modelli.
+Una volta modificato secondo le nostre necessità il file models.py, andiamo ad eseguire
+
+```bash
+python manage.py makemigrations booking
+python manage.py migrate
+```
+In questo modo andremo a creare le nostre tabelle sul DB.
 
 ### Test Deploy su Azure
 
@@ -890,6 +900,11 @@ e avendo lo step
 ```bash
 python3 manage.py createsuperuser --noinput
 ```
+A questo punto tutta la parte di configurazione dell'applicazione per girare sulla nostra infrastruttura Azure è conclusa.
+Verifichiamo solamente che connettendoci all'<app service url>/admin e inserendo i dati corretti, abbiamo accesso al pannello di amministrazion dell'applicazione.
+
+![alt text](docs/img/django_admin_first_access.png)
+
 ### Elementi infratrutturali
 
 #### PostgreSQL

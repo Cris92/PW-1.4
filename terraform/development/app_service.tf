@@ -24,9 +24,9 @@ resource "azurerm_linux_web_app" "app" {
     "PYTHON_VERSION"                  = "3.9"
     "SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
     "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
-    "DJANGO_SUPERUSER_USERNAME"       = "admin"
-    "DJANGO_SUPERUSER_EMAIL"          = "admin@example.com"
-    "DJANGO_SUPERUSER_PASSWORD"       = "SuperSecretPassword"
+    "DJANGO_SUPERUSER_USERNAME"       = azurerm_key_vault_secret.django_username.value
+    "DJANGO_SUPERUSER_EMAIL"          = azurerm_key_vault_secret.django_mail.value
+    "DJANGO_SUPERUSER_PASSWORD"       = azurerm_key_vault_secret.django_pwd.value
     "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
     "DB_NAME"                         = azurerm_postgresql_database.postgres_db.name
     "DB_USER"                         = "${azurerm_postgresql_server.postgres_server.administrator_login}@${azurerm_postgresql_server.postgres_server.name}"

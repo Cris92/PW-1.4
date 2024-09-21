@@ -8,7 +8,6 @@
     padding: 15px;
     margin-bottom: 10px;
     flex-direction: column;
-    /* Imposta la direzione di default delle card a colonna */
 }
 
 .hotel-image {
@@ -21,7 +20,6 @@
 .hotel-details {
     flex-grow: 1;
     width: 100%;
-    /* Assicurati che i dettagli occupino tutta la larghezza disponibile */
     text-align: center;
 }
 
@@ -74,37 +72,29 @@
 @media (min-width: 768px) {
     .hotel-card {
         flex-direction: row;
-        /* Disposizione orizzontale su schermi grandi */
         text-align: left;
     }
 
     .hotel-image {
         max-width: 300px;
-        /* Imposta una larghezza massima per l'immagine */
         margin-right: 15px;
-        /* Aggiungi margine tra l'immagine e i dettagli */
     }
 
     .hotel-details {
         width: calc(100% - 300px);
-        /* Assicurati che i dettagli occupino lo spazio restante */
     }
 }
 
-/* Media Query per dispositivi mobili */
 @media (max-width: 576px) {
     .hotel-card {
         flex-direction: column;
-        /* Le card diventano colonne su dispositivi mobili */
         text-align: center;
-        /* Centra il contenuto per una migliore visualizzazione */
     }
 
     .hotel-image {
         margin-bottom: 10px;
         width: 100%;
         height: auto;
-        /* L'immagine occupa tutta la larghezza disponibile */
     }
 
     .hotel-details {

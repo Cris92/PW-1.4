@@ -51,7 +51,6 @@
             </div>
         </div>
     </div>
-    <!-- Modal per il risultato -->
     <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -60,7 +59,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="resultMessage">
-                    <!-- Messaggio di risultato -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
@@ -71,7 +69,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="{% static 'js/edit_booking.js' %}"></script> <!-- Includi qui il file JavaScript separato -->
+    <script src="{% static 'js/edit_booking.js' %}"></script>
     <script>
         const unavailableDates = {{ unavailable_dates| safe }};
 
