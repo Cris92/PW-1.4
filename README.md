@@ -3,11 +3,15 @@
 
 Questo progetto implementa un sistema di prenotazione per l'Hotel Pegaso utilizzando Django come framework backend.
 
-## Strumenti Utilizzati
+## Tecnologie Utilizzate
 
  - Visual Studio Code
  - Git
  - WinGet
+ - Azure
+ - Github Actions
+ - Terraform
+ - Python
 
 
 ## Altre Info
@@ -39,9 +43,20 @@ e avrò degli step interattivi per eseguire una commit secondo le convenzioni
 ## Struttura del Progetto
 
 - **hotel_pegaso/**: Contiene l'app principale del progetto.
-  - **booking/**: Contiene i dati relativi alla Django app booking.
+  - **booking/**: Contiene i file necessari per il funzionamento della Django app.
+    - **migrations/**: Contiene i file di migrazione generati da Django durante il makemigrations
+    - **static/**: Contiene i file statici utilizzati dalla parte frontend dell'applicazione, contenente css,images e javascripts
+    - **templates/**: Contiene i file html che verranno utilizzati da Django tramite Jinja per generare dinamicamente le pagine web
+    - **admin.py**: Il file che gestisce la pagina di admin della webapp, permettendoci di definire filtri e views oltre a registrare i model che sono da gestire manualmente
+    - **apps.py**: Il file che gestisce le metainformazione dell'app Django
+    - **models.py**: Il file al cui interno vengono definiti i modelli dell'app
+    - **tests.py**: Il file contenente gli unit test che verranno eseguiti durante il deploy
+    - **urls.py**: File contente il mapping tra le url e le views
+    - **views.py**: File contente le logiche di renderizzazione e le logiche di controller dell'app
+    
   - **hotel_pegaso/**: Contiene i file di configurazione del Django Project.
     - **manage.py**: Script di gestione del progetto Django.
+  - **media/**: Cartella contenente quelle che nel caso del progetto saranno le immagini delle stanze, e quindi tutto quello che viene dinamicamente inserito dall'utente riferito ai modelli
 
 ## Sviluppo
 
@@ -325,12 +340,20 @@ Adesso vado a configurare i render delle views andando creare il file urls.py in
 
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('booking/', views.booking_view, name='booking'),
-    path('rooms/', views.rooms, name='rooms'),
-    path('manage-booking/', views.manage_booking, name='manage_booking'),
+    path('rooms/', views.room_list, name='rooms'),
+    path('rooms/<int:pk>/', views.room_detail, name='room_detail'),
+    path('rooms/<int:room_id>/select_dates/', views.select_dates, name='select_dates'),
+    path('rooms/<int:room_id>/confirm_booking/', views.confirm_booking, name='confirm_booking'),
+    path('rooms/<int:room_id>/complete_booking/', views.complete_booking, name='complete_booking'),
+    path('booking/<str:booking_code>/download_pdf/', views.generate_pdf, name='download_pdf'),
+    path('manage_booking/', views.manage_booking, name='manage_booking'),
+    path('booking/<int:booking_id>/edit/', views.edit_booking_view, name='edit_booking_view'),
+    path('booking/<int:booking_id>/update/', views.edit_booking_post, name='edit_booking_post'),
 ]
 ```
 
@@ -339,23 +362,178 @@ in questo modo andiamo a definire le route della django app.
 Andiamo poi a configurare a quale view corrispondono le singole pagine modificando views.py
 
 ```python
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
+from .models import *
+from datetime import datetime,timedelta
+from django.urls import reverse
+from django.utils.crypto import get_random_string
+from django.http import JsonResponse
+
+import uuid
+import io
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # View per la homepage
 def index(request):
     return render(request, 'index.html')
 
-# View per la pagina di prenotazione
-def booking_view(request):
-    return render(request, 'booking.html')
+def room_list(request):
+    rooms = Room.objects.all()
+    return render(request, 'rooms.html', {'rooms': rooms})
+def select_dates(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    
+    if request.method == 'GET':
+        return render(request, 'select_dates.html', {'room': room})
+    
+def room_detail(request, pk):
+    room = Room.objects.get(pk=pk)
+    return render(request, 'room.html', {'room': room})
 
-# View per la pagina delle camere disponibili
-def rooms(request):
-    return render(request, 'rooms.html')
+def select_dates(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    bookings = Booking.objects.filter(room=room)
+    
+    # Genera una lista di date non disponibili
+    unavailable_dates = []
+    for booking in bookings:
+        current_date = booking.checkin_date
+        while current_date <= booking.checkout_date:
+            unavailable_dates.append(current_date.strftime('%Y-%m-%d'))
+            current_date += timedelta(days=1)
 
-# View per la gestione delle prenotazioni
+    if request.method == 'GET':
+        return render(request, 'select_dates.html', {'room': room, 'unavailable_dates': unavailable_dates})
+
+def confirm_booking(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    checkin = request.GET.get('checkin')
+    checkout = request.GET.get('checkout')
+
+    # Calcolo del prezzo totale
+    checkin_date = datetime.strptime(checkin, '%Y-%m-%d')
+    checkout_date = datetime.strptime(checkout, '%Y-%m-%d')
+    days = (checkout_date - checkin_date).days
+    total_price = days * room.price_per_night
+
+    context = {
+        'room': room,
+        'checkin': checkin,
+        'checkout': checkout,
+        'total_price': total_price
+    }
+    return render(request, 'confirm_booking.html', context)
+
+def complete_booking(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    checkin = request.GET.get('checkin')
+    checkout = request.GET.get('checkout')
+
+    # Generazione di un codice di prenotazione univoco
+    booking_code = get_random_string(8)
+
+    # Creazione della prenotazione
+    Booking.objects.create(
+        room=room,
+        checkin_date=datetime.strptime(checkin, '%Y-%m-%d'),
+        checkout_date=datetime.strptime(checkout, '%Y-%m-%d'),
+        booking_code=booking_code,
+    )
+
+    context = {
+        'room': room,
+        'checkin': checkin,
+        'checkout': checkout,
+        'booking_code': booking_code
+    }
+
+    return render(request, 'complete_booking.html', context)
+
+def generate_pdf(request, booking_code):
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    p.drawString(100, 750, "Conferma Prenotazione")
+    p.drawString(100, 730, f"Codice Prenotazione: {booking_code}")
+    p.drawString(100, 710, "Grazie per aver prenotato con noi!")
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Prenotazione_{booking_code}.pdf"'
+    return response
+
 def manage_booking(request):
-    return render(request, 'manage-booking.html')
+    if request.method == 'POST':
+        booking_code = request.POST.get('booking_code')
+        try:
+            booking = Booking.objects.get(booking_code=booking_code)
+            return redirect('edit_booking_view', booking_id=booking.id)
+        except Booking.DoesNotExist:
+            return render(request, 'manage_booking.html', {'error': 'Codice prenotazione non valido.'})
+
+    return render(request, 'manage_booking.html')
+
+def edit_booking_view(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    room = booking.room  # La stanza associata alla prenotazione
+    bookings = Booking.objects.filter(room=room)
+    
+    # Genera una lista di date non disponibili
+    unavailable_dates = []
+    for booking_iteration in bookings:
+        if booking_iteration.id != booking_id:
+            current_date = booking_iteration.checkin_date
+            while current_date <= booking_iteration.checkout_date:
+                unavailable_dates.append(current_date.strftime('%Y-%m-%d'))
+                current_date += timedelta(days=1)
+
+    return render(request, 'edit_booking.html', {'checkin_date':booking.checkin_date.strftime('%Y-%m-%d'),'checkout_date':booking.checkout_date.strftime('%Y-%m-%d'),'booking': booking, 'unavailable_dates': unavailable_dates})
+
+def edit_booking_post(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    room = booking.room  # La stanza associata alla prenotazione
+    print (request.method)
+    print (request.POST)
+    action = request.POST.get('action')
+    if request.method == 'POST':
+        try:
+            if action == 'delete':
+                booking.delete()
+                return JsonResponse({'status': 'success', 'action': 'deleted'})
+
+            elif action == 'update':
+                checkin = request.POST.get('checkin_date')
+                checkout = request.POST.get('checkout_date')
+
+                new_checkin_date = datetime.strptime(checkin, '%Y-%m-%d').date()
+                new_checkout_date = datetime.strptime(checkout, '%Y-%m-%d').date()
+
+                # Verifica le date non disponibili
+                conflicting_bookings = Booking.objects.filter(
+                    room=room,
+                    checkin_date__lt=new_checkout_date,
+                    checkout_date__gt=new_checkin_date
+                ).exclude(id=booking.id)
+
+                if conflicting_bookings.exists():
+                    return JsonResponse({'status': 'error', 'message': 'Le date selezionate non sono disponibili per questa stanza.'})
+
+                # Se non ci sono conflitti, aggiorna la prenotazione
+                booking.checkin_date = new_checkin_date
+                booking.checkout_date = new_checkout_date
+                booking.save()
+
+                # Genera il PDF
+                pdf_url = f"/booking/{booking.booking_code}/download_pdf/"
+
+                return JsonResponse({'status': 'success', 'action': 'updated', 'pdf_url': pdf_url})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Metodo non consentito'}, status=405)
 
 ```
 
@@ -420,7 +598,7 @@ Andiamo a creare il requirements.txt andando ad aggiungere oltre a Django, anche
 Andiamo adesso a lanciare la pipeline definita in Pipeline Deploy WebApp
 
 
-## Infrastruttura
+## Generazione Infrastruttura cloud Azure tramite IaC
 L'infrastruttura per il progetto consiste in una Service App deployata su Azure su cui girerà la nostra applicazione Django
 Il tutto verrà gestito in modalità zero-touch, quindi sfruttando un linguaggio IaC, nello specifico terraform, andremo a gestire la creazione degli oggetti necessari.
 In seguito la fase di deploy avverrà tramite github actions
@@ -941,6 +1119,7 @@ resource "azurerm_postgresql_firewall_rule" "allow_app_service_outbound2" {
 - Utilizzare SKU Maggiori su DB per implementare navigazione privata
 - Utilizzare self hosted agents per github actions
 - Nascondere secret del db tramite keyvault reference su app settings
+- Utilizzare servizi cloud native per lo storage dei media
 
 
 ## BiblioGraphy
