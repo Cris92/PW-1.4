@@ -1,23 +1,33 @@
 # Indice
 - [Hotel Pegaso - Sistema di Prenotazione](#hotel-pegaso---sistema-di-prenotazione)
+  
   - [Tecnologie Utilizzate](#tecnologie-utilizzate)
+  
   - [Altre Info](#altre-info)
     - [Conventional Commit](#conventional-commit)
+    
     - [Struttura del Progetto](#struttura-del-progetto)
-  -[Come Funziona L'applicazione](#come-funziona-lapplicazione)
-    -[Framework Django](#framework-django)
-    -[Definizione degli oggetti](#definizione-degli-oggetti)
-    -[Definizione dei template](#definizione-dei-template)
-    -[Logiche](#logiche)
-    -[Forwarding](#forwarding)
-  -[How To Run](#how-to-run)
-  -[Punti salienti durante lo sviluppo](#punti-salienti-durante-lo-sviluppo)
-    -[Prerequisiti](#prerequisiti)
-    -[Fasi di Sviluppo](#fasi-di-sviluppo)
-  -[Generazione Infrastruttura cloud Azure tramite IaC](#generazione-infrastruttura-cloud-azure-tramite-iac)
-  -[Gestione CI/CD](#gestione-cicd)
-  -[Improvements](#improvements)
-  -[Biblio](#bibliography)
+    
+  - [Come Funziona L'applicazione](#come-funziona-lapplicazione)
+    
+    - [Framework Django](#framework-django)
+    
+    - [Definizione degli oggetti](#definizione-degli-oggetti)
+
+    - [Definizione dei template](#definizione-dei-template)
+
+    - [Logiche](#logiche)
+
+    - [Forwarding](#forwarding)
+
+  - [How To Run](#how-to-run)
+  - [Punti salienti durante lo sviluppo](#punti-salienti-durante-lo-sviluppo)
+    - [Prerequisiti](#prerequisiti)
+    - [Fasi di Sviluppo](#fasi-di-sviluppo)
+  - [Generazione Infrastruttura cloud Azure tramite IaC](#generazione-infrastruttura-cloud-azure-tramite-iac)
+  - [Gestione CI/CD](#gestione-cicd)
+  - [Improvements](#improvements)
+  - [Biblio](#bibliography)
 
 # Hotel Pegaso - Sistema di Prenotazione
 
