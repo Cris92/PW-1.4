@@ -1,7 +1,28 @@
+# Indice
+- [Hotel Pegaso - Sistema di Prenotazione](#hotel-pegaso---sistema-di-prenotazione)
+  - [Tecnologie Utilizzate](#tecnologie-utilizzate)
+  - [Altre Info](#altre-info)
+    - [Conventional Commit](#conventional-commit)
+    - [Struttura del Progetto](#struttura-del-progetto)
+  -[Come Funziona L'applicazione](#come-funziona-lapplicazione)
+    -[Framework Django](#framework-django)
+    -[Definizione degli oggetti](#definizione-degli-oggetti)
+    -[Definizione dei template](#definizione-dei-template)
+    -[Logiche](#logiche)
+    -[Forwarding](#forwarding)
+  -[How To Run](#how-to-run)
+  -[Punti salienti durante lo sviluppo](#punti-salienti-durante-lo-sviluppo)
+    -[Prerequisiti](#prerequisiti)
+    -[Fasi di Sviluppo](#fasi-di-sviluppo)
+  -[Generazione Infrastruttura cloud Azure tramite IaC](#generazione-infrastruttura-cloud-azure-tramite-iac)
+  -[Gestione CI/CD](#gestione-cicd)
+  -[Improvements](#improvements)
+  -[Biblio](#bibliography)
 
 # Hotel Pegaso - Sistema di Prenotazione
 
 Questo progetto implementa un sistema di prenotazione per l'Hotel Pegaso utilizzando Django come framework backend.
+Per i docenti, per vedere come lanciare il progetto andare su [How To Run](#how-to-run)
 
 ## Tecnologie Utilizzate
 
@@ -40,7 +61,7 @@ cz-cust
 
 e avrò degli step interattivi per eseguire una commit secondo le convenzioni
 
-## Struttura del Progetto
+### Struttura del Progetto
 
 - **hotel_pegaso/**: Contiene l'app principale del progetto.
   - **booking/**: Contiene i file necessari per il funzionamento della Django app.
@@ -58,14 +79,138 @@ e avrò degli step interattivi per eseguire una commit secondo le convenzioni
     - **manage.py**: Script di gestione del progetto Django.
   - **media/**: Cartella contenente quelle che nel caso del progetto saranno le immagini delle stanze, e quindi tutto quello che viene dinamicamente inserito dall'utente riferito ai modelli
 
-## Sviluppo
+
+## Come Funziona L'applicazione
+
+### Framework Django
+Per il progetto è stato scelto di utilizzare come framework Django.
+Questo perchè oltre ad offrire una facile integrazione con l'interfaccia web, e la possibilità di creare qualcosa di simile ad una one page application,
+offre altre utili funzionalità, prima tra tutte un ORM integrato, ed una facile integrazione con sistemi cloud.
+Inoltre ci offre un'interfaccia di gestione degli oggetti in modo automatico grazie a Django Admin.
+Manteniamo inoltre una facile separazione per il modello MTV(Model Template View)
+Andiamo ora ad analizzare più a fondo come è composto il progetto
+
+
+### Definizione degli oggetti
+Una volta definita l'analisi del progetto, ho potuto facilmente andare a creare i modelli che avrebbero composto l'applicazione.
+Grazie all'integrazione con un ORM, andiamo a definire i modelli nel file models.py.
+Questo ci da la possibilità di andare a modificare automaticamente il database a seguito di modifiche grazie ai comandi makemigrations e migrate disponibili sul manage.py.
+Essendo oggetti abbastanza semplici, al proprio interno andiamo a definire la tipologia dei campi, oltre, lì dove serve, a funzionalità di base.
+Ad esempio per la classe Room, andiamo a definire delle semplici funzioni che ci forniscono le medie dei voti e il numero di stelle da rappresentare a video.
+
+### Definizione dei template
+Andiamo invece ad analizzare la parte di templating.
+In Django ciò è molto semplice.
+Andiamo innanzitutto a definire i file .html all'interno della cartella template(cartella definibile all'interno di settings.py).
+Nel caso di questo progetto specifico, vediamo l'utilizzo di nesting che ci permettono di definire una volta sola componenti come navbar e footer, che saranno presenti più volte.
+
+Infatti, possiamo inserire un html all'interno di un'altro, tramite il tag  
+```html
+{% include './navbar.html' %}
+```
+All'interno del file navbar.html, vediamo un utilizzo invece del tag condizionale, per gestire la pagina dove siamo attualmente
+
+```html
+<a class="nav-link {% if request.resolver_match.url_name == 'rooms' %}active{% endif %}"
+```
+
+Qui, andiamo a visualizzare il nome della pagina e in caso corrisponda all'url definita nella navbar, andiamo a settare la classe "active", in modo da evidenziare differentemente la scritta in base alla pagina su cui ci troviamo
+
+### Logiche
+Le logiche applicative le andiamo a definire all'interno del file views.py.
+Qui inseriamo varie logiche applicative per il retrieve delle stanze, della prenotazione, e di aggiornamento ed eliminazione.
+
+### Forwarding
+La connessione tra l'indirizzo e il template/le logiche avviene tramite il file urls.py.
+Qui andiamo semplicemente ad associare un path ad una funzione definita in views.py
+
+```python
+path('booking/<int:booking_id>/edit/', views.edit_booking_view, name='edit_booking_view'),
+```
+
+Ad esempio nel caso sopra, andiamo a definire che il path booking/1/edit richiami la funzione views.edit_booking_view. Inoltre le associamo un nome che potrà poi essere gestito all'interno del codice.
+Notiamo come il booking_id venga definito all'interno del path e Django si occupera automaticamente di valorizzarlo nella funzione associata, semplicemente grazie al fatto che il nome definito qui, e il nome della variabile è lo stesso.
+
+
+## How To Run
 
 ### Prerequisiti
 
 - **Python 3.x** deve essere installato sul sistema.
-- **virtualenv** per creare un ambiente virtuale (opzionale ma raccomandato).
+- **git** Per gestire il clone del repository.
 
-### Configurazione dell'Ambiente di Sviluppo
+#### Clone Repository
+
+Prima di tutto su cartella nuova, aprire un terminale e usare comando 
+
+```bash
+git clone https://github.com/Cris92/PW-1.4.git
+```
+
+![alt text](docs/img/howto1.png)
+
+#### Installazione Ambiente
+Lanciare il comando 
+
+```bash
+python -m venv venv
+```
+Per generare il virtual_environment
+
+E attivarlo usando
+
+ Linux/macOS
+ ```bash
+source venv/bin/activate
+```
+Windows
+```bash
+venv\Scripts\activate  
+```
+Dopodichè navigare nella cartella
+
+"clonepath"\PW-1.4\hotel_pegaso
+
+E successivamente lanciare 
+
+```bash
+pip install -r requirements.txt
+```
+Per l'installazione delle dipendenze.
+
+A questo punto andare nella cartella
+
+"clonepath"\PW-1.4\hotel_pegaso\hotel_pegaso
+
+e lanciare
+
+```bash
+python manage.py runserver
+```
+
+A questo punto si potrà navigare su http://localhost:8000/ per visionare la webapp.
+
+Se tutto funziona, fare CTRL+C per chiudere la webapp e lanciare
+
+```bash
+python3 manage.py createsuperuser
+```
+
+Qui completare i campi dopodichè restartare il server con il comando runserve e navigare su
+
+http://localhost:8000/admin
+
+Inserendo i dati inseriti prima come superuser si potrà navigare nel menù di admin per gestire manualmente i models.
+
+Il database sarà già precaricato con i dati inseriti da me in fase di sviluppo, avendo caricato in repository anche il file db.sqllite3
+
+Vi ringrazio per l'attenzione e spero che il progetto sia di vostro gradimento.
+
+## Punti salienti durante lo sviluppo
+
+
+
+### Fasi di Sviluppo
 
 **Creo un ambiente virtuale** (opzionale ma raccomandato):
 
@@ -736,6 +881,78 @@ e ora vedremo che all'interno del nostro container sono presenti i 3 file di ges
 
 **⚠️ ATTENZIONE:** In caso doveste committare a questo punto, è necessario aggiungere al .gitignore terraform/*/.terraform/
 
+### Elementi infratrutturali
+
+#### PostgreSQL
+Useremo un Postgresql server come appoggio per l'applicazione.
+Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezza adeguato ad un eventuale ambiente di produzione, in quanto non supporta la disabilitazione della navigazione pubblica, o la creazione di un private endpoint.
+E' importante creare le firewall rules in azure per permettere la comunicazione tra la webapp ed il db
+
+```terraform
+resource "azurerm_postgresql_firewall_rule" "allow_azure_services" {
+  name                = "AllowAzureServices"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
+resource "azurerm_postgresql_firewall_rule" "allow_app_service_outbound2" {
+  name                = "AllowAppServiceOutboundAccess2"
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  server_name         = azurerm_postgresql_server.postgres_server.name
+
+  start_ip_address = "10.0.1.0"
+  end_ip_address   = "10.0.1.255"
+}
+
+```
+#### App Service Plan
+Per il deploy della webapp andremo ad utilizzare un App Service Plan.
+Questo ci permette di andare a gestire i deploy dell'applicazione senza preoccuparci dell'infrastruttura sottostante.
+In questo caso avremo
+
+```terraform
+# Crea un Service Plan su Linux
+resource "azurerm_service_plan" "asp" {
+  name                = "asp-pegaso-dev-westeu-001"
+  location            = azurerm_resource_group.dev_rg.location
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  sku_name            = "B1"
+  os_type             = "Linux"
+
+}
+
+# Crea un Linux App Service
+resource "azurerm_linux_web_app" "app" {
+  name                = "as-pegaso-dev-westeu-001"
+  location            = azurerm_resource_group.dev_rg.location
+  resource_group_name = azurerm_resource_group.dev_rg.name
+  service_plan_id     = azurerm_service_plan.asp.id
+
+  site_config {
+  }
+  app_settings = {
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"  = "true"
+    "PRE_BUILD_COMMAND"               = "echo Pre-build command executed"
+    "POST_BUILD_COMMAND"              = "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput && python3 manage.py createsuperuser --noinput"
+    "PYTHON_VERSION"                  = "3.9"
+    "SCM_BUILD_ARGS"                  = "--platform python --platform-version 3.9"
+    "PYTHON_ENABLE_WORKER_EXTENSIONS" = "true"
+    "DJANGO_SUPERUSER_USERNAME"       = azurerm_key_vault_secret.django_username.value
+    "DJANGO_SUPERUSER_EMAIL"          = azurerm_key_vault_secret.django_mail.value
+    "DJANGO_SUPERUSER_PASSWORD"       = azurerm_key_vault_secret.django_pwd.value
+    "DB_HOST"                         = azurerm_postgresql_server.postgres_server.fqdn
+    "DB_NAME"                         = azurerm_postgresql_database.postgres_db.name
+    "DB_USER"                         = "${azurerm_postgresql_server.postgres_server.administrator_login}@${azurerm_postgresql_server.postgres_server.name}"
+    "DB_PASSWORD"                     = azurerm_key_vault_secret.db_password.value
+    "SECRET_KEY"                      = "django-insecure-de^(3m@7^j+4vix#p&1vj)(3h_tr(h+5d%uofit*g8zb9ecc6a"
+  }
+}
+```
+
+Per ulteriori informazioni su app service plan visionare documentazione Microsoft [qui](https://learn.microsoft.com/en-us/azure/app-service/environment/overview)
 ### Gestione CI/CD
 
 Per la gestione del lancio del terraform quando viene modificato il codice sul repository, andiamo ad utilizzare le Github Actions.
@@ -1082,34 +1299,6 @@ A questo punto tutta la parte di configurazione dell'applicazione per girare sul
 Verifichiamo solamente che connettendoci all'<app service url>/admin e inserendo i dati corretti, abbiamo accesso al pannello di amministrazion dell'applicazione.
 
 ![alt text](docs/img/django_admin_first_access.png)
-
-### Elementi infratrutturali
-
-#### PostgreSQL
-Useremo un Postgresql server come appoggio per l'applicazione.
-Utilizzando lo SKU minore per motivi di costi, non avremo un livello di sicurezza adeguato ad un eventuale ambiente di produzione, in quanto non supporta la disabilitazione della navigazione pubblica, o la creazione di un private endpoint.
-E' importante creare le firewall rules in azure per permettere la comunicazione tra la webapp ed il db
-
-```terraform
-resource "azurerm_postgresql_firewall_rule" "allow_azure_services" {
-  name                = "AllowAzureServices"
-  resource_group_name = azurerm_resource_group.dev_rg.name
-  server_name         = azurerm_postgresql_server.postgres_server.name
-
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
-}
-
-resource "azurerm_postgresql_firewall_rule" "allow_app_service_outbound2" {
-  name                = "AllowAppServiceOutboundAccess2"
-  resource_group_name = azurerm_resource_group.dev_rg.name
-  server_name         = azurerm_postgresql_server.postgres_server.name
-
-  start_ip_address = "10.0.1.0"
-  end_ip_address   = "10.0.1.255"
-}
-
-```
 
 
 
